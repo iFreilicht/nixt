@@ -76,3 +76,7 @@ To support newcomers as well as possible with their first steps, all templates i
 
 6. This points you to your entry point for modifying the environment. The comments in the flake will
    guide you to the resources you need to get started quickly, without being overwhelming.
+
+## Adding new templates
+
+Just copy `templates/empty` and modify it. Then add the template to `flake.nix` following the other examples.
