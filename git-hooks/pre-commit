@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import re
+import subprocess
+
+any_check_failed = False
+
+# Find all staged files
+staged_files = subprocess.check_output(["git", "diff", "--name-only", "--cached"]).decode().splitlines()
+
+RED = subprocess.check_output(["tput", "setaf", "1"]).decode().strip()
+GREEN = subprocess.check_output(["tput", "setaf", "2"]).decode().strip()
+BLUE = subprocess.check_output(["tput", "setaf", "4"]).decode().strip()
+RESET = subprocess.check_output(["tput", "sgr0"]).decode().strip()
+
+# Check if there are any staged files in **/template directories that are not allowed there
+# We have to do this in a hook instead of adding a rule to .gitignore because flake.lock will be generated during testing,
+# and Nix is unable to find it if it's in the .gitignore
+ALLOWED_FILES_IN_TEMPLATES = ["flake.nix", ".envrc"]
+staged_template_files = [file for file in staged_files if re.match(r"templates/.*/template", file)]
+
+for file in staged_template_files:
+    base_name = file.split("/")[-1]
+
+    # Check if the file is not in the list of allowed files
+    if base_name not in ALLOWED_FILES_IN_TEMPLATES:
+        print(f"{RED}File {BLUE}{file}{RED} is not allowed in {BLUE}**/template{RED} directories. Please remove it from the staging area with {GREEN}'git reset -- {file}'{RED} and try again.")
+        any_check_failed = True
+
+
+if any_check_failed:
+    exit(1)
+
+# If we made it here, no forbidden files were found
+exit(0)

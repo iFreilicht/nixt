@@ -1,4 +1,4 @@
-# nixt, super basic Nix flake tempaltes
+# Nixt - super basic Nix flake templates
 
 If you want to use [Nix](https://nixos.org/) in an existing project, or just get a basic project going from scratch without
 any decisions being made on your behalf, these templates are for you.
