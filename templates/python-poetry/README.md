@@ -3,7 +3,7 @@
 ## Add nix to an existing project
 
 ```sh
-nix init -t github:iFreilicht/nixt#python-poetry
+nix flake init -t github:iFreilicht/nixt#python-poetry
 direnv allow # or nix develop
 ```
 
