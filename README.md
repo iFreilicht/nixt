@@ -19,9 +19,7 @@ Add a template to your existing repository (where `<template>` is the name of th
 nix flake init -t github:iFreilicht/nixt#<template>
 ```
 
-Then, **if you want to use direnv**, add `.direnv` to your `.gitignore` and run `direnv allow`.
-
-Otherwise, **if you don't want to use direnv**, remove the generated `.envrc` file, and run `nix develop`.
+You will then see a helpful message that guides you through the next steps.
 
 When creating a new project from scratch, check [Docs for each template](#docs-for-each-template) to see specific instructions.
 
@@ -46,3 +44,35 @@ This means that, after adding the template of your choosing from this repo to yo
 * the version of your package manager itself is locked, too (similar to [asdf-vm](https://asdf-vm.com/))
 * the build and deployment process of your project does not change at all
 
+### Onboarding journey
+
+To support newcomers as well as possible with their first steps, all templates in this repository have the following onboarding journey:
+
+1. Check the README of the template that fits your use-case
+2. Run the specified commands until you reach `nix flake init -t github:iFreilicht/nixt#<template>`
+3. This will display a helpful message to guide you through the next steps:
+
+    >    __You just added Nix to your project!__
+    >
+    >    Next steps:
+    >
+    >    1. If you're in a git repository:
+    >        - Add `.direnv` to your `.gitignore` file
+    >        - Run `git add flake.nix`, otherwise the next step *will fail*!
+    >    3. Decide whether you want to use direnv or not and then either:
+    >        - run `direnv allow` to always enable the environment when you enter the project directory
+    >        - run `nix develop` to enable the environment manually
+    >    4. Follow the instructions that will be presented to you after entering the environment
+
+    These cover important caveats that newcomers stumble over commonly.
+
+4. Enter the development environment for the first time
+5. A new message is shown:
+
+    > **---  WARNING  ---**
+    > Please open the newly created `flake.nix` file and have a look at the `# TODO` comments!
+    > Once you're done, remove the lines that printed these warnings from the shellHook.
+    > **-----------------**
+
+6. This points you to your entry point for modifying the environment. The comments in the flake will
+   guide you to the resources you need to get started quickly, without being overwhelming.
