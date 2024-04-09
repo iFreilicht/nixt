@@ -1,0 +1,2 @@
+# When testing, direnv will create its working directory, which we don't want to track
+**/.direnv
