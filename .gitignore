@@ -1,6 +1,10 @@
 # When testing, direnv will create its working directory, which we don't want to track
 **/.direnv
 
-# python-poetry template
-python-poetry/pyproject.toml
-python-poetry/poetry.lock
+**/template/*
+# Apart from these two files, nothing should be tracked as part of a template
+!**/template/flake.nix
+!**/template/.envrc
+# The lock file has to be tracked for Nix to be able to enter the environment for testing,
+# but it should not be part of the template, so we prevent committing it with git-hooks/pre-commit
+!**/template/flake.lock
