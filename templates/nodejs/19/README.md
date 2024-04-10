@@ -1,9 +1,9 @@
-# nodejs_21
+# nodejs.19
 
 ## Add nix to an existing project
 
 ```sh
-nix flake init -t github:iFreilicht/nixt#nodejs_21
+nix flake init -t github:iFreilicht/nixt#nodejs.19
 direnv allow # or nix develop
 ```
 
@@ -14,7 +14,7 @@ This is just an example, remember to replace `project-name` with your desired pr
 ```sh
 git init project-name
 cd project-name
-nix flake init -t github:iFreilicht/nixt#nodejs_21
+nix flake init -t github:iFreilicht/nixt#nodejs.19
 direnv allow # or nix develop
 ```
 

@@ -46,6 +46,8 @@
         }) //
     (
       let
+        lib = nixpkgs.legacyPackages.x86_64-linux.lib; # Architecture doesn't matter in the lib
+
         nextStepsText = ''
 
             Next steps:
@@ -80,14 +82,22 @@
             + nextStepsText;
           };
 
-          nodejs_21 = {
-            path = ./templates/node/nodejs_21/template;
-            description = "Node.js project with node 21";
-            welcomeText = ''
-              __You just added Nix to your Node.js project!__
-            ''
-            + nextStepsText;
-          };
+          nodejs =
+            let
+              versions = [ "21" "20" "19" "18" "17" "16" "14" ];
+              latest_version = lib.head versions;
+            in
+            (lib.genAttrs versions (version: {
+              path = ./templates/nodejs/${version}/template;
+              description = "Node.js project with node ${version}";
+              welcomeText = ''
+                __You just added Nix to your Node.js project!__
+              ''
+              + nextStepsText;
+            })) // {
+              path = ./templates/nodejs/${latest_version}/template;
+              description = "Node.js project with latest version (v${latest_version}).Use e.g. nodejs.18 for a specific version. Available versions: ${lib.concatStringsSep ", " versions}";
+            };
         };
       }
     )

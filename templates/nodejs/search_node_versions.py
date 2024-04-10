@@ -87,5 +87,5 @@ pprint.pp(highest_versions)
 print("\n\n---\n\n")
 
 print("Release branches to select:")
-for major, version in highest_versions.items():
-    print(f"nodejs_{major}: {version.branch}")
+for major, version in sorted(highest_versions.items(), key=lambda x: x[0]):
+    print(f"nodejs_{major}:\t{version.branch}\t({version.semver})")
