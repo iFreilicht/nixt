@@ -78,6 +78,15 @@
             ''
             + nextStepsText;
           };
+
+          nodejs_21 = {
+            path = ./templates/node/nodejs_21/template;
+            description = "Node.js project with node 21";
+            welcomeText = ''
+              __You just added Nix to your Node.js project!__
+            ''
+            + nextStepsText;
+          };
         };
       }
     )
