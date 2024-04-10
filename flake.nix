@@ -24,7 +24,8 @@
             pkgs.mkShell
               {
                 buildInputs = with pkgs; [
-                  python3
+                  (python3.withPackages
+                    (ps: with ps; [ semver ]))
                 ];
                 shellHook = ''
                   FLAKE_ROOT="$(git rev-parse --show-toplevel)"
