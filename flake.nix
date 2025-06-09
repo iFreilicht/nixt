@@ -73,6 +73,15 @@
             + nextStepsText;
           };
 
+          c = {
+            path = ./templates/c/template;
+            description = "C (autotools) project";
+            welcomeText = ''
+              __You just added Nix to your C project!__
+            ''
+            + nextStepsText;
+          };
+
           python-poetry = {
             path = ./templates/python-poetry/template;
             description = "Python project with poetry";
