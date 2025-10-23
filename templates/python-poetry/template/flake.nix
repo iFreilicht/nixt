@@ -4,7 +4,12 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
     let
       systems = with flake-utils.lib.system; [
         # Add or remove systems from this list if your project can be developed on them or not
@@ -15,39 +20,37 @@
         aarch64-darwin
       ];
     in
-    flake-utils.lib.eachSystem systems (system:
+    flake-utils.lib.eachSystem systems (
+      system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        devShell =
-          pkgs.mkShell
-            {
-              buildInputs = with pkgs; [
-                # TODO: Add your development dependencies here, check https://search.nixos.org/packages to find the proper names
-                poetry
-              ];
-              # TODO: Add commands you want to run before the environment is entered here
-              # Do not run a new shell here, direnv and nix develop will do that for you
-              shellHook = ''
-                if [ -f pyproject.toml ]; then
-                  poetry env use python3;
-                  source $(poetry env info --path)/bin/activate;
-                  poetry install;
-                else
-                  echo -e "$(tput setaf 1)\n--- $(tput smso) ERROR $(tput rmso) ---\n"
-                  echo -e "No pyproject.toml found!\n"
-                  echo -e "To create a new project, delete this directory again, and follow the instructions at $(tput setaf 4)https://github.com/iFreilicht/nixt/blob/main/templates/python-poetry/README.md"
-                  echo -e "$(tput setaf 1)\n---------------\n$(tput sgr0)"
-                fi
+        devShell = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            # TODO: Add your development dependencies here, check https://search.nixos.org/packages to find the proper names
+            poetry
+          ];
+          # TODO: Add commands you want to run before the environment is entered here
+          # Do not run a new shell here, direnv and nix develop will do that for you
+          shellHook = ''
+            if [ -f pyproject.toml ]; then
+              poetry env use python3;
+              source $(poetry env info --path)/bin/activate;
+              poetry install;
+            else
+              echo -e "$(tput setaf 1)\n--- $(tput smso) ERROR $(tput rmso) ---\n"
+              echo -e "No pyproject.toml found!\n"
+              echo -e "To create a new project, delete this directory again, and follow the instructions at $(tput setaf 4)https://github.com/iFreilicht/nixt/blob/main/templates/python-poetry/README.md"
+              echo -e "$(tput setaf 1)\n---------------\n$(tput sgr0)"
+            fi
 
-                echo -e "$(tput setaf 3)\n--- $(tput smso) WARNING $(tput rmso) ---\n"
-                echo -e "Please open the newly created $(tput setaf 4)flake.nix$(tput setaf 3) file and have a look at the $(tput setaf 2)# TODO$(tput setaf 3) comments!\n"
-                echo -e "Once you're done, remove the lines that printed these warnings from the shellHook."
-                echo -e "$(tput setaf 3)\n-----------------\n$(tput sgr0)"
-              '';
-            };
-      });
+            echo -e "$(tput setaf 3)\n--- $(tput smso) WARNING $(tput rmso) ---\n"
+            echo -e "Please open the newly created $(tput setaf 4)flake.nix$(tput setaf 3) file and have a look at the $(tput setaf 2)# TODO$(tput setaf 3) comments!\n"
+            echo -e "Once you're done, remove the lines that printed these warnings from the shellHook."
+            echo -e "$(tput setaf 3)\n-----------------\n$(tput sgr0)"
+          '';
+        };
+      }
+    );
 }
-
-

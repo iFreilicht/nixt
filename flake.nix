@@ -4,7 +4,12 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
     let
       systems = with flake-utils.lib.system; [
         # See https://github.com/numtide/flake-utils/blob/main/allSystems.nix for a complete list
@@ -14,41 +19,46 @@
         aarch64-darwin
       ];
     in
-    (flake-utils.lib.eachSystem systems
-      (system:
+    (
+      flake-utils.lib.eachSystem systems (
+        system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          devShell =
-            pkgs.mkShell
-              {
-                buildInputs = with pkgs; [
-                  (python3.withPackages
-                    (ps: with ps; [ semver ]))
-                ];
-                shellHook = ''
-                  FLAKE_ROOT="$(git rev-parse --show-toplevel)"
-                  (
-                    cd "$FLAKE_ROOT"
-                    if [ -d git-hooks ]; then
-                      rm -f .git/hooks/*
-                      cp git-hooks/* .git/hooks/
-                    else
-                      echo -e "$(tput setaf 3)\n--- $(tput smso) WARNING $(tput rmso) ---\n"
-                      echo -e "Could not install git hooks, please cd into the nixt repository and run $(tput setaf 2)'direnv allow'$(tput setaf 3) or $(tput setaf 2)'nix develop'$(tput setaf 3) there.\n"
-                      echo -e "Determined FLAKE_ROOT='$FLAKE_ROOT', but that doesn't seem to be the root of the nixt repository!"
-                      echo -e "$(tput setaf 3)\n-----------------\n$(tput sgr0)"
-                    fi
-                  )
-                '';
-              };
-        }) //
-    (
-      let
-        lib = nixpkgs.legacyPackages.x86_64-linux.lib; # Architecture doesn't matter in the lib
+          devShell = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              (python3.withPackages (ps: with ps; [ semver ]))
+              ncurses # Commandline formatting
+              nixd # LSP Language Server
+              nixfmt-rfc-style # Formatter
+              direnv # Automated environment management
+            ];
+            shellHook = ''
+              FLAKE_ROOT="$(git rev-parse --show-toplevel)"
+              (
+                cd "$FLAKE_ROOT"
+                if [ -d git-hooks ]; then
+                  rm -f .git/hooks/*
+                  cp git-hooks/* .git/hooks/
+                else
+                  echo -e "$(tput setaf 3)\n--- $(tput smso) WARNING $(tput rmso) ---\n"
+                  echo -e "Could not install git hooks, please cd into the nixt repository and run $(tput setaf 2)'direnv allow'$(tput setaf 3) or $(tput setaf 2)'nix develop'$(tput setaf 3) there.\n"
+                  echo -e "Determined FLAKE_ROOT='$FLAKE_ROOT', but that doesn't seem to be the root of the nixt repository!"
+                  echo -e "$(tput setaf 3)\n-----------------\n$(tput sgr0)"
+                fi
+              )
+            '';
+          };
 
-        nextStepsText = ''
+          formatter = pkgs.nixfmt-rfc-style;
+        }
+      )
+      // (
+        let
+          lib = nixpkgs.legacyPackages.x86_64-linux.lib; # Architecture doesn't matter in the lib
+
+          nextStepsText = ''
 
             Next steps:
 
@@ -59,58 +69,65 @@
               - run `direnv allow` to always enable the environment when you enter the project directory
               - run `nix develop` to enable the environment manually
             4. Follow the instructions that will be presented to you after entering the environment
-        '';
-      in
-      {
-        templates = {
+          '';
+        in
+        {
+          templates = {
 
-          empty = {
-            path = ./templates/empty/template;
-            description = "Empty project";
-            welcomeText = ''
-              __You just added Nix to your project!__
-            ''
-            + nextStepsText;
-          };
-
-          c = {
-            path = ./templates/c/template;
-            description = "C (autotools) project";
-            welcomeText = ''
-              __You just added Nix to your C project!__
-            ''
-            + nextStepsText;
-          };
-
-          python-poetry = {
-            path = ./templates/python-poetry/template;
-            description = "Python project with poetry";
-            welcomeText = ''
-              __You just added Nix to your python project!__
-            ''
-            + nextStepsText;
-          };
-
-          nodejs =
-            let
-              versions = [ "21" "20" "19" "18" "17" "16" "14" ];
-              latest_version = lib.head versions;
-            in
-            (lib.genAttrs versions (version: {
-              path = ./templates/nodejs/${version}/template;
-              description = "Node.js project with node ${version}";
+            empty = {
+              path = ./templates/empty/template;
+              description = "Empty project";
               welcomeText = ''
-                __You just added Nix to your Node.js project!__
+                __You just added Nix to your project!__
               ''
               + nextStepsText;
-            })) // {
-              path = ./templates/nodejs/${latest_version}/template;
-              description = "Node.js project with latest version (v${latest_version}).Use e.g. nodejs.18 for a specific version. Available versions: ${lib.concatStringsSep ", " versions}";
             };
-        };
-      }
-    )
+
+            c = {
+              path = ./templates/c/template;
+              description = "C (autotools) project";
+              welcomeText = ''
+                __You just added Nix to your C project!__
+              ''
+              + nextStepsText;
+            };
+
+            python-poetry = {
+              path = ./templates/python-poetry/template;
+              description = "Python project with poetry";
+              welcomeText = ''
+                __You just added Nix to your python project!__
+              ''
+              + nextStepsText;
+            };
+
+            nodejs =
+              let
+                versions = [
+                  "21"
+                  "20"
+                  "19"
+                  "18"
+                  "17"
+                  "16"
+                  "14"
+                ];
+                latest_version = lib.head versions;
+              in
+              (lib.genAttrs versions (version: {
+                path = ./templates/nodejs/${version}/template;
+                description = "Node.js project with node ${version}";
+                welcomeText = ''
+                  __You just added Nix to your Node.js project!__
+                ''
+                + nextStepsText;
+              }))
+              // {
+                path = ./templates/nodejs/${latest_version}/template;
+                description = "Node.js project with latest version (v${latest_version}).Use e.g. nodejs.18 for a specific version. Available versions: ${lib.concatStringsSep ", " versions}";
+              };
+          };
+        }
+      )
     );
 }
-
-
