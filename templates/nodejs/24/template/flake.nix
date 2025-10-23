@@ -4,14 +4,14 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs";
   # nixpkgs unstable only packages the latest few versions of nodejs, so to ensure old versions are available,
   # we need to use an older release as well. The new release is still available for up-to-date dev dependencies.
-  inputs.nixpkgs_24_11.url = "github:NixOS/nixpkgs/release-24.11";
+  inputs.nixpkgs_25_05.url = "github:NixOS/nixpkgs/release-25.05";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs =
     {
       self,
       nixpkgs,
-      nixpkgs_24_11,
+      nixpkgs_25_05,
       flake-utils,
     }:
     let
@@ -28,12 +28,12 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pkgs_24_11 = import nixpkgs_24_11 {
+        pkgs_25_05 = import nixpkgs_25_05 {
           inherit system;
           overlays = [
             # Ensure that all packages depending on nodejs will use the version we want
             (self: super: {
-              nodejs = super.nodejs_18;
+              nodejs = super.nodejs_24;
             })
           ];
         };
@@ -45,7 +45,7 @@
               # TODO: Add your development dependencies here, check https://search.nixos.org/packages to find the proper names
               # The dependencies added here will be up-to-date, but independent of the installed nodejs version
             ])
-            ++ (with pkgs_24_11; [
+            ++ (with pkgs_25_05; [
               # TODO: Add dependencies that must use the older nodejs version here
               nodejs
               # yarn

@@ -33,7 +33,7 @@
           overlays = [
             # Ensure that all packages depending on nodejs will use the version we want
             (self: super: {
-              nodejs = super.nodejs_18;
+              nodejs = super.nodejs_23;
             })
           ];
         };
