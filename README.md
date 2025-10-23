@@ -11,9 +11,15 @@ without changing *anything else* about how your project is built or deployed.
 
 ## Getting started
 
-Make sure you have Nix (and optionally direnv) installed and the experimental features `flakes` and `nix-command` enabled. *(TODO: add instructions for newcomers)*
+Make sure you have Nix (and optionally direnv) installed and the experimental features `flakes` and `nix-command` enabled.
+If you're not on NixOS, the easiest way to achieve this is to use the [Lix Installer](https://lix.systems/install/).
+Run the following command and answer "Yes" when it asks whether to enable flakes:
 
-Add a template to your existing repository (where `<template>` is the name of the template):
+```
+curl -sSf -L https://install.lix.systems/lix | sh -s -- install
+```
+
+To add Nix to your existing repository (where `<template>` is the name of the template):
 
 ```
 nix flake init -t github:iFreilicht/nixt#<template>
