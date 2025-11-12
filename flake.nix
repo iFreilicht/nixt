@@ -129,6 +129,16 @@
                 path = ./templates/nodejs/${latest_version}/template;
                 description = "Node.js project with latest version (v${latest_version}).Use e.g. nodejs.18 for a specific version. Available versions: ${lib.concatStringsSep ", " versions}";
               };
+
+            zig = {
+              path = ./templates/zig/template;
+              description = "zig project";
+              welcomeText = ''
+                __You just added Nix to your zig project!__
+              ''
+              + nextStepsText;
+            };
+
           };
         }
       )
